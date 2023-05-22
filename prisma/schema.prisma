@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// model User: é a tabela User, foi utilizado o nome model para ser o mais genérico possível visto que nem todo banco de dados usa o nome table
+// @id: representa que esta é a chave primaria da tabela
+// @default (uuid()): foi utilizado para gerar um id unico universal -> uuid
+
+// OBS: Para salvar qualquer alteração, é necessário rodar no terminal o seguinte comando => npx prisma migrate dev
+// Onde cada migrate é equivalente a um commit, pedindo então um nome para guardar no histórico de alterações
+
+model User {
+  id        String   @id @default(uuid())
+  githubId  Int      @unique
+  name      String
+  login     String
+  avatarUrl String
+  memories  Memory[]
+}
+
+model Memory {
+  id       String   @id @default(uuid())
+  coverUrl String
+  content  String
+  isPublic Boolean  @default(false)
+  cretedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
